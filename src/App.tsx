@@ -1,4 +1,4 @@
-import { Grid, Card, CardContent } from "@mui/material";
+import { Grid, Card, CardContent, Alert } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { TodoComponentProps, Todo, ListItem } from "interfaces";
 import React, { useState } from "react";
@@ -60,7 +60,7 @@ function App() {
     });
     newList[stageIndex].todos = newTodos;
     if (checkIsAllTodosDoneForStage(stageIndex)) {
-      handleStageUnlock(stageIndex);
+      handleStageUnlock();
     }
     localStorage.setItem("listData", JSON.stringify(newList));
     setList(newList);
@@ -71,7 +71,11 @@ function App() {
       const response = await axios.get(
         "https://uselessfacts.jsph.pl//random.json?language=en"
       );
-      alert(response.data.text);
+      alert(
+        `Congrats! You deserve a random fact! 
+        ${response.data.text} 
+      `
+      );
       if (response) return response.data;
     } catch (error) {
       console.error(error);
@@ -79,7 +83,7 @@ function App() {
   };
 
   //check all todos isdone before next stage unlock
-  const handleStageUnlock = (stageIndex) => {
+  const handleStageUnlock = () => {
     const completedStageCount: any = [];
 
     const localStorageList: any = JSON.parse(
