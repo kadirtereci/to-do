@@ -1,25 +1,142 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Grid, Card, CardContent } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { TodoComponentProps, Todo, ListItem } from "interfaces";
+import React, { useState } from "react";
+import "./App.css";
+import { LabeledCheckbox } from "./components";
+import DoneIcon from "@mui/icons-material/Done";
+import { initialData } from "initialData";
+
+const useStyles = makeStyles(() => ({
+  cardStyle: {
+    marginTop: "20px",
+    marginBottom: "20px",
+    flexDirection: "column",
+    overflow: "auto",
+    padding: "20px",
+  },
+}));
+
+//generate checboxes
+const TodoComponent: React.FC<TodoComponentProps> = React.memo<any>(
+  ({ listItem, index, handleCheckboxChecked, isDisabled }) => {
+    return listItem.todos.map((todo: Todo) => {
+      return (
+        <Grid item xs={12}>
+          <LabeledCheckbox
+            checked={todo.isDone}
+            label={todo.label}
+            disabled={isDisabled || false}
+            onChange={(e) => {
+              handleCheckboxChecked(e, listItem, index, todo.id);
+            }}
+            name="selectedClient"
+          />
+        </Grid>
+      );
+    });
+  }
+);
 
 function App() {
+  const classes = useStyles();
+
+  const [list, setList] = useState<ListItem[]>(initialData);
+
+  //handle checkbox
+  const handleCheckboxChecked = (
+    e: any,
+    listItem: ListItem,
+    stageIndex: number,
+    todoId: number
+  ) => {
+    const newList = [...list];
+    const newTodos = listItem.todos.map((todo) => {
+      if (todo.id === todoId) {
+        todo.isDone = e.target.checked;
+      }
+      return todo;
+    });
+    newList[stageIndex].todos = newTodos;
+    if (checkIsAllTodosDoneForStage(stageIndex)) {
+      handleStageUnlock(stageIndex);
+    }
+    localStorage.setItem("listData", JSON.stringify(newList));
+    setList(newList);
+  };
+
+  //check all todos isdone before next stage unlock
+  const handleStageUnlock = (stageIndex) => {
+    const completedStageCount: any = [];
+
+    const localStorageList: any = JSON.parse(
+      localStorage.getItem("listData") || ""
+    );
+
+    console.log("localStorageList", localStorageList);
+
+    for (let index = 0; index <= list.length - 1; index++) {
+      if (checkIsAllTodosDoneForStage(index)) completedStageCount.push(index);
+    }
+    const biggestIndex = Math.max(...completedStageCount);
+
+    if (
+      completedStageCount.length - 1 === biggestIndex &&
+      biggestIndex !== list.length - 1
+    ) {
+      const newList = [...list];
+      newList[biggestIndex + 1].isStageDisabled = false;
+      setList(newList);
+    }
+  };
+
+  const checkIsAllTodosDoneForStage = (stageIndex) => {
+    const newList = [...list];
+    return newList[stageIndex].todos.every((el, index) => {
+      if (index === 0) {
+        return true;
+      } else {
+        return el.isDone === true;
+      }
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      style={{ backgroundColor: "#cecece" }}
+    >
+      <Grid item xs={12} md={6}>
+        <Card className={classes.cardStyle}>
+          <CardContent>
+            {list.map((listItem: ListItem, index: any) => {
+              return (
+                <React.Fragment>
+                  <span className="Stage"> {index + 1} </span> &nbsp;
+                  <b>
+                    {listItem.header}
+                    {checkIsAllTodosDoneForStage(index) ? (
+                      <DoneIcon fontSize="large" color="success" />
+                    ) : (
+                      ""
+                    )}
+                  </b>
+                  &nbsp;
+                  <TodoComponent
+                    listItem={listItem}
+                    index={index}
+                    isDisabled={listItem.isStageDisabled || false}
+                    handleCheckboxChecked={handleCheckboxChecked}
+                  />
+                </React.Fragment>
+              );
+            })}
+          </CardContent>
+        </Card>
+      </Grid>
+    </Grid>
   );
 }
 
