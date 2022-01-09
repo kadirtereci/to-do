@@ -6,6 +6,7 @@ import "./App.css";
 import { LabeledCheckbox } from "./components";
 import DoneIcon from "@mui/icons-material/Done";
 import { initialData } from "initialData";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   cardStyle: {
@@ -65,6 +66,18 @@ function App() {
     setList(newList);
   };
 
+  const getRandomFactAndShow = async () => {
+    try {
+      const response = await axios.get(
+        "https://uselessfacts.jsph.pl//random.json?language=en"
+      );
+      alert(response.data.text);
+      if (response) return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   //check all todos isdone before next stage unlock
   const handleStageUnlock = (stageIndex) => {
     const completedStageCount: any = [];
@@ -87,18 +100,17 @@ function App() {
       const newList = [...list];
       newList[biggestIndex + 1].isStageDisabled = false;
       setList(newList);
+    } else if (
+      completedStageCount.length - 1 === biggestIndex &&
+      biggestIndex === list.length - 1
+    ) {
+      getRandomFactAndShow();
     }
   };
 
   const checkIsAllTodosDoneForStage = (stageIndex) => {
     const newList = [...list];
-    return newList[stageIndex].todos.every((el, index) => {
-      if (index === 0) {
-        return true;
-      } else {
-        return el.isDone === true;
-      }
-    });
+    return newList[stageIndex].todos.every((el, index) => el.isDone === true);
   };
 
   return (
