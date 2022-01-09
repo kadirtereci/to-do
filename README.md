@@ -1,8 +1,8 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is built for To-Do app prject. Add and Delete will come soon
 
-## Available Scripts
+## [Live Preview ->](https://to-do-oaks.surge.sh/)
+
 
 In the project directory, you can run:
 ### `yarn install`
