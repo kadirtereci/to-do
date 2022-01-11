@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
 //generate checboxes
 const TodoComponent: React.FC<TodoComponentProps> = React.memo<any>(
   ({ listItem, index, handleCheckboxChecked, isDisabled }) => {
-    return listItem.todos.map((todo: Todo) => {
+    return listItem.todos.map((todo: Todo, index) => {
       return (
         <Grid item xs={12}>
           <LabeledCheckbox
@@ -31,7 +31,7 @@ const TodoComponent: React.FC<TodoComponentProps> = React.memo<any>(
             onChange={(e) => {
               handleCheckboxChecked(e, listItem, index, todo.id);
             }}
-            name="selectedClient"
+            key={`tdky${todo.id}${index}`}
           />
         </Grid>
       );
