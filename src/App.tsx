@@ -84,7 +84,7 @@ function App() {
 
   //check all todos isdone before next stage unlock
   const handleStageUnlock = () => {
-    const completedStageCount: any = [];
+    const completedStageIndexes: any = [];
 
     const localStorageList: any = JSON.parse(
       localStorage.getItem("listData") || ""
@@ -93,19 +93,19 @@ function App() {
     console.log("localStorageList", localStorageList);
 
     for (let index = 0; index <= list.length - 1; index++) {
-      if (checkIsAllTodosDoneForStage(index)) completedStageCount.push(index);
+      if (checkIsAllTodosDoneForStage(index)) completedStageIndexes.push(index);
     }
-    const biggestIndex = Math.max(...completedStageCount);
+    const biggestIndex = Math.max(...completedStageIndexes);
 
     if (
-      completedStageCount.length - 1 === biggestIndex &&
+      completedStageIndexes.length - 1 === biggestIndex &&
       biggestIndex !== list.length - 1
     ) {
       const newList = [...list];
       newList[biggestIndex + 1].isStageDisabled = false;
       setList(newList);
     } else if (
-      completedStageCount.length - 1 === biggestIndex &&
+      completedStageIndexes.length - 1 === biggestIndex &&
       biggestIndex === list.length - 1
     ) {
       getRandomFactAndShow();
