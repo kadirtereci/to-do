@@ -1,8 +1,8 @@
 
 ## About app
 
-The next stage will not open until all the todos are done. 
-After you mark a todo as not done in the old stage, even if you mark everything in the last stage as done, you cannot proceed to the next stage.
+- The next stage will not open until all the todos are done. 
+- After you mark a todo as not done in the old stage, even if you mark everything in the last stage as done, you cannot proceed to the next stage.
 
 ## [Live Preview ->](https://to-do-oaks.surge.sh/)
 
